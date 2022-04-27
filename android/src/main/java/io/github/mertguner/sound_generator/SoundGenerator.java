@@ -23,6 +23,7 @@ public class SoundGenerator {
     private boolean isPlaying = false;
     private int minSamplesSize;
     private WaveTypes waveType = WaveTypes.SINUSOIDAL;
+    private float volume = 1;
     private float rightVolume = 1, leftVolume = 1;
 
     public void setAutoUpdateOneCycleSample(boolean autoUpdateOneCycleSample) {
@@ -60,16 +61,16 @@ public class SoundGenerator {
     public void setBalance(float balance) {
         balance = Math.max(-1, Math.min(1, balance));
 
-        rightVolume = (balance >= 0) ? 1 : (balance == -1) ? 0 : (1 + balance);
-        leftVolume = (balance <= 0) ? 1 : (balance == 1) ? 0 : (1 - balance);
+        rightVolume = (balance >= 0) ? 1 : (balance <= -1) ? 0 : (1 + balance);
+        leftVolume = (balance <= 0) ? 1 : (balance >= 1) ? 0 : (1 - balance);
+
         if (audioTrack != null) {
-            audioTrack.setStereoVolume(leftVolume, rightVolume);
+            audioTrack.setStereoVolume(leftVolume * volume, rightVolume * volume);
         }
     }
 
-
-    public void setVolume(float volume) {
-        volume = Math.max(0, Math.min(1, volume));
+    public void setVolume(float newVolume) {
+        volume = Math.max(0, Math.min(1, newVolume));
 
         if (audioTrack != null) {
             audioTrack.setStereoVolume(leftVolume * volume, rightVolume * volume);
